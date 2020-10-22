@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="用Python做一个Telegram的新闻Bot 在这篇文章中，我们构建一个高可用的Telegram机器人，用来在成千上万的新闻源当中搜索内容。  介绍Telegram 现在是一个全球流行的实时消息应用，它的特点是安全性和高效性，除了可以互相发送消息以外，还可以在它上面创建bot用来自动执行一些任务。 在这个教程中，我们将用Python和Telegram’s bot API 创建一个基于Datan">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Python做一个Telegram的新闻Bot">
+<meta property="og:url" content="https://mikecc.top/2020/10/22/%E7%94%A8Python%E5%81%9A%E4%B8%80%E4%B8%AATelegram%E7%9A%84%E6%96%B0%E9%97%BBBot/index.html">
+<meta property="og:site_name" content="香菜粉丝">
+<meta property="og:description" content="用Python做一个Telegram的新闻Bot 在这篇文章中，我们构建一个高可用的Telegram机器人，用来在成千上万的新闻源当中搜索内容。  介绍Telegram 现在是一个全球流行的实时消息应用，它的特点是安全性和高效性，除了可以互相发送消息以外，还可以在它上面创建bot用来自动执行一些任务。 在这个教程中，我们将用Python和Telegram’s bot API 创建一个基于Datan">
+<meta property="og:image" content="https://datanews.io/static/assets/img/screenshots/bot-demo.gif">
+<meta property="og:image" content="https://mikecc.top/Users/michael/Desktop/%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg">
+<meta property="article:published_time" content="2020-10-22T05:28:33.017Z">
+<meta property="article:modified_time" content="2020-10-22T05:28:33.017Z">
+<meta property="article:author" content="Shangjin">
+<meta property="article:tag" content="随笔">
+<meta property="article:tag" content=" 日记">
+<meta property="article:tag" content=" 编程">
+<meta property="article:tag" content=" 英语">
+<meta property="article:tag" content=" 成长">
+<meta property="article:tag" content=" python">
+<meta property="article:tag" content=" rust">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://datanews.io/static/assets/img/screenshots/bot-demo.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://mikecc.top/2020/10/22/用Python做一个Telegram的新闻Bot/"/>
+
+
+
+
+
+  <title>用Python做一个Telegram的新闻Bot | 香菜粉丝</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">香菜粉丝</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">香菜香菜粉丝粉丝</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mikecc.top/2020/10/22/%E7%94%A8Python%E5%81%9A%E4%B8%80%E4%B8%AATelegram%E7%9A%84%E6%96%B0%E9%97%BBBot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shangjin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="香菜粉丝">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">用Python做一个Telegram的新闻Bot</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-10-22T13:28:33+08:00">
+                2020-10-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="用Python做一个Telegram的新闻Bot"><a href="#用Python做一个Telegram的新闻Bot" class="headerlink" title="用Python做一个Telegram的新闻Bot"></a>用Python做一个Telegram的新闻Bot</h1><blockquote>
+<p>在这篇文章中，我们构建一个高可用的Telegram机器人，用来在成千上万的新闻源当中搜索内容。</p>
+</blockquote>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>Telegram 现在是一个全球流行的实时消息应用，它的特点是安全性和高效性，除了可以互相发送消息以外，还可以在它上面创建bot用来自动执行一些任务。</p>
+<p>在这个教程中，我们将用Python和Telegram’s bot API 创建一个基于Datanews的新闻bot。</p>
+<h2 id="Telegram-API-简单介绍"><a href="#Telegram-API-简单介绍" class="headerlink" title="Telegram API 简单介绍"></a>Telegram API 简单介绍</h2><p>我们将使用官方的<code>python-telegram-bot</code>Api，这个库大大简化了开发Bot的工作，而且通过一些官方给出的例子，很容易学习和掌握它，下面是一个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> telegram.ext <span class="keyword">import</span> Updater, CommandHandler</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">USAGE = <span class="string">'/greet &lt;name&gt; - Greet me!'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(update, context)</span>:</span></span><br><span class="line">  update.message.reply_text(USAGE)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">greet_command</span><span class="params">(update, context)</span>:</span></span><br><span class="line">  update.message.reply_text(<span class="string">f'Hello <span class="subst">&#123;context.args[<span class="number">0</span>]&#125;</span>!'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">  updater = Updater(<span class="string">"TOKEN"</span>, use_context=<span class="literal">True</span>)</span><br><span class="line">  dp = updater.dispatcher </span><br><span class="line"></span><br><span class="line">  <span class="comment"># on different commands - answer in Telegram </span></span><br><span class="line">  dp.add_handler(CommandHandler(<span class="string">"start"</span>, start)) </span><br><span class="line">  dp.add_handler(CommandHandler(<span class="string">"greet"</span>, greet_command)) </span><br><span class="line"></span><br><span class="line">  <span class="comment"># Start the Bot </span></span><br><span class="line">  updater.start_polling() </span><br><span class="line">  updater.idle() </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>: </span><br><span class="line">  main()</span><br></pre></td></tr></table></figure>
+
+<p>这个小代码片段创建了一个bot用来识别两个命令：</p>
+<ol>
+<li><code>/start</code> - Bot会根据这个命令响应出帮助页面</li>
+<li><code>/greet</code>- 这个命令会接受一个参数，例如<code>Datanews</code>,然后返回<code>Hello Datanews!</code></li>
+</ol>
+<p>来看看每一行代码的含义：</p>
+<p><code>main</code>方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">  updater = Updater(<span class="string">"TOKEN"</span>, use_context=<span class="literal">True</span>)</span><br><span class="line">  dp = updater.dispatcher</span><br><span class="line"></span><br><span class="line">  dp.add_handler(CommandHandler(<span class="string">"start"</span>, start))</span><br><span class="line">  dp.add_handler(CommandHandler(<span class="string">"greet"</span>, greet_command))</span><br><span class="line"></span><br><span class="line">  updater.start_polling()</span><br><span class="line">  updater.idle()</span><br></pre></td></tr></table></figure>
+
+<p>这个方法配置了一些Bot工作必要的参数，特别是<code>Update</code>类的实例，需要注意的是，你需要一个Telegram的<code>token</code>才能使用Telegram Bot 的API，你可以查看这个创建Bot的官方指南<a href="https://core.telegram.org/bots#3-how-do-i-create-a-bot" target="_blank" rel="noopener">点这里</a>。</p>
+<p>回到代码，<code>Updater</code>的目的是为了将更新传递给<code>Dispatcher</code>，当后者收到一个更新，它将处理用户指定的一些回调请求，每一个回调都由一个程序管理。</p>
+<p>当收到的消息满足某些条件时，虽然这些条件取决于程序，也可以由开发者自己定义，就我们而言我们有两个任务处理实例。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dp.add_handler(CommandHandler(<span class="string">"start"</span>, start))</span><br><span class="line">dp.add_handler(CommandHandler(<span class="string">"greet"</span>, greet_command))</span><br></pre></td></tr></table></figure>
+
+<p>上面的每一条处理一个命令，用来支持我们Bot的<code>/start</code>和<code>/greet</code></p>
+<p>然后我们调用<code>start_polling</code>命令。</p>
+<p><code>updater.start_polling()</code></p>
+<p>这个命令会让我们的bot周期性的处理更新，这个参数会在内部创建两个进程，一个用来从Telegram服务器轮询更新，另一个将由调度程序处理这些更新。</p>
+<p>下面这一行确保我们的bot可以正确的处理各种中断信号</p>
+<p><code>updater.idle</code></p>
+<p>现在我们讨论两个处理bot命令的回调函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">(update, context)</span>:</span></span><br><span class="line">  update.message.reply_text(USAGE)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">greet_command</span><span class="params">(update, context)</span>:</span></span><br><span class="line">  update.message.reply_text(<span class="string">f'Hello <span class="subst">&#123;context.args[<span class="number">0</span>]&#125;</span>!'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>上面每一个方法都需要两个参数：</p>
+<ol>
+<li><code>update</code> 从Telegram服务器收到一个更新</li>
+<li><code>context</code>包含一些有用的参数和信息，举个例子，它有一个用来储存用户相关信息的<code>user_data</code>字典</li>
+</ol>
+<p>除此以外，每一个参数都会给用户返回一条消息。</p>
+<h2 id="Datanews-API-介绍"><a href="#Datanews-API-介绍" class="headerlink" title="Datanews API 介绍"></a>Datanews API 介绍</h2><p>Datanews 是一个用来从成千上万个新闻源中取回和监控新闻的API，新闻聚合器和其他网站，每天收集并处理了数十万的新闻数据，当然，它也提供了灵活和简单可用的API用来检索这些新闻文章。</p>
+<p>对于我们这个小项目，我们只需要API中的一小部分，特别是我们想让bot能做什么：</p>
+<ol>
+<li>根据用户输入的关键字返回新闻内容</li>
+<li>根据特定的新闻源返回新闻内容</li>
+</ol>
+<p>这些用例需求可以用一个入口处理- <code>/headlines</code>, 你可以在后面链接中了解到更多相关的API<a href="https://datanews.io/docs" target="_blank" rel="noopener">official documentation</a>.</p>
+<h2 id="程序实施"><a href="#程序实施" class="headerlink" title="程序实施"></a>程序实施</h2><p>首先，我们要定义一个处理<code>/start</code>命令的回调函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_usage</span><span class="params">()</span>:</span></span><br><span class="line">  <span class="keyword">return</span> <span class="string">'''This bot allows you to query news articles from Datanews API.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Available commands:</span></span><br><span class="line"><span class="string">/help, /start - show this help message.</span></span><br><span class="line"><span class="string">/search &lt;query&gt; - retrieve news articles containing &lt;query&gt;.</span></span><br><span class="line"><span class="string">  Example: "/search covid"</span></span><br><span class="line"><span class="string">/publisher &lt;domain&gt; - retrieve newest articles by publisher.</span></span><br><span class="line"><span class="string">  Example: "/publisher techcrunch.com"'''</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">help_command</span><span class="params">(update, context)</span>:</span></span><br><span class="line">  update.message.reply_markdown(get_usage())</span><br></pre></td></tr></table></figure>
+
+<p>就像你看到的，这个实现方式与我们上面演示的很相似，我们简单的返回了一个help信息给用户，你可以注意到我们的bot支持四个命令，下面我们讨论其他两个：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">search_command</span><span class="params">(update, context)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">fetcher</span><span class="params">(query)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> datanews.headlines(query, size=<span class="number">10</span>, sortBy=<span class="string">'date'</span>, page=<span class="number">0</span>, language=<span class="string">'en'</span>)</span><br><span class="line">  _fetch_data(update, context, fetcher)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">publisher_command</span><span class="params">(update, context)</span>:</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">fetcher</span><span class="params">(query)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> datanews.headlines(source=query, size=<span class="number">10</span>, sortBy=<span class="string">'date'</span>, page=<span class="number">0</span>, language=<span class="string">'en'</span>)</span><br><span class="line">  _fetch_data(update, context, fetcher)</span><br></pre></td></tr></table></figure>
+
+<p>这些方法看起来都非常简单，它们都用了我们前面讨论过的<code>/headlines</code>API，唯一的区别是我们传递给Datanews API的参数：search_command检索与特定查询匹配的文章，而Publisher_command提取所有由特定来源发布的文章，这两个方法中我们都只活去10条最近的文章。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_fetch_data</span><span class="params">(update, context, fetcher)</span>:</span></span><br><span class="line">  <span class="keyword">if</span> <span class="keyword">not</span> context.args:</span><br><span class="line">    help_command(update, context)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">  query = <span class="string">'"'</span> + <span class="string">' '</span>.join(context.args) + <span class="string">'"'</span></span><br><span class="line">  result = fetcher(query)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> <span class="keyword">not</span> result[<span class="string">'hits'</span>]:</span><br><span class="line">    update.message.reply_text(<span class="string">'No news is good news'</span>)</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">  last_message = update.message</span><br><span class="line">  <span class="keyword">for</span> article <span class="keyword">in</span> reversed(result[<span class="string">'hits'</span>]):</span><br><span class="line">    text = article[<span class="string">'title'</span>] + <span class="string">': '</span> + article[<span class="string">'url'</span>]</span><br><span class="line">    last_message = last_message.reply_text(text)</span><br></pre></td></tr></table></figure>
+
+<p>这个方法简单的检查了用户输入的特定的参数，从Datanews API中取出数据并排序返回给用户，</p>
+<ol>
+<li>我们确保用“包围查询”，以便Datanews返回所有包含完整查询的文章，而不仅仅是其中的一个单词。</li>
+<li>我们还要确保处理无法查询到文章的情况，如果这种情况下bot无反应是扯淡的。</li>
+<li>我们发送给用户的内容必须确保排序后的内容最后一条是最新的内容。</li>
+</ol>
+<p>有了这些功能，我们看一下主程序：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">  updater = Updater(token=<span class="string">'TOKEN'</span>)</span><br><span class="line"></span><br><span class="line">  updater.dispatcher.add_handler(CommandHandler(<span class="string">'start'</span>, help_command))</span><br><span class="line">  updater.dispatcher.add_handler(CommandHandler(<span class="string">'help'</span>, help_command))</span><br><span class="line">  updater.dispatcher.add_handler(CommandHandler(<span class="string">'search'</span>, search_command))</span><br><span class="line">  updater.dispatcher.add_handler(CommandHandler(<span class="string">'publisher'</span>, publisher_command))</span><br><span class="line"></span><br><span class="line">  updater.dispatcher.add_handler(</span><br><span class="line">    MessageHandler(</span><br><span class="line">      Filters.text &amp; Filters.regex(pattern=re.compile(<span class="string">'help'</span>, re.IGNORECASE)),</span><br><span class="line">      help_command</span><br><span class="line">    )</span><br><span class="line">  )</span><br><span class="line"></span><br><span class="line">  updater.start_polling()</span><br><span class="line">  updater.idle()</span><br></pre></td></tr></table></figure>
+
+<p>这个程序看起来和前面的例子非常相似，只有一个主要区别是下面：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">updater.dispatcher.add_handler(</span><br><span class="line">  MessageHandler(</span><br><span class="line">    Filters.text &amp; Filters.regex(pattern=re.compile(<span class="string">'help'</span>, re.IGNORECASE)),</span><br><span class="line">    help_command</span><br><span class="line">  )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><code>MessageHandler</code>用来获得用户的输入，你可以认为它是<code>CommandHandler</code>的类似功能，它可以处理任何满足指定过滤器的消息，在我们的六种，我们想在用户输入信息中包含help的时候将帮助信息返回给用户。</p>
+<p>因此，我们有了一个完全程序化的新闻机器人。</p>
+<p><img src="https://datanews.io/static/assets/img/screenshots/bot-demo.gif" alt="bot-demo"></p>
+<blockquote>
+<p>此文章翻译自<a href="https://datanews.io/blog/building-telegram-news-bot-2020" target="_blank" rel="noopener">https://datanews.io/blog/building-telegram-news-bot-2020</a></p>
+</blockquote>
+<p>关注公众号获得更多最新的精彩内容。</p>
+<p><img src="/Users/michael/Desktop/%E4%BA%8C%E7%BB%B4%E7%A0%81.jpg" alt="二维码"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/10/21/%E5%88%A9%E7%94%A8pandas%E8%AF%BB%E5%8F%96%E6%A0%BC%E5%BC%8F%E4%B8%8D%E8%A7%84%E8%8C%83%E7%9A%84Excel%E6%96%87%E4%BB%B6/" rel="next" title="利用pandas读取格式不规范的Excel文件">
+                <i class="fa fa-chevron-left"></i> 利用pandas读取格式不规范的Excel文件
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Shangjin</p>
+              <p class="site-description motion-element" itemprop="description">个人网站，猪窝</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#用Python做一个Telegram的新闻Bot"><span class="nav-number">1.</span> <span class="nav-text">用Python做一个Telegram的新闻Bot</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Telegram-API-简单介绍"><span class="nav-number">1.2.</span> <span class="nav-text">Telegram API 简单介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Datanews-API-介绍"><span class="nav-number">1.3.</span> <span class="nav-text">Datanews API 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序实施"><span class="nav-number">1.4.</span> <span class="nav-text">程序实施</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shangjin</span>
+
+  
+</div>
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+      <div id="needsharebutton-float">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "default";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "bottomCenter";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+      flOptions = {};
+      
+          flOptions.iconStyle = "default";
+      
+          flOptions.boxForm = "vertical";
+      
+          flOptions.position = "topRight";
+      
+          flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-float', flOptions);
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":350},"mobile":{"show":true}});</script></body>
+</html>

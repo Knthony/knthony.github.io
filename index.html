@@ -319,7 +319,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-03T10:35:57+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-03T10:36:21+08:00">
                 2021-03-03
               </time>
             
@@ -329,6 +329,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tech/" itemprop="url" rel="index">
+                    <span itemprop="name">Tech</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -362,7 +384,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  348
+                  331
                 </span>
               
 
@@ -401,19 +423,16 @@
       
         
           
-          
-title: Neo4j APOC — 初体验
-date: 2021/3/3 10:36:21
-categories:
-- Tech
-tags:
-- Neo4j
--–
-APOC 到底是什么APOC作为Neo4j实验室的项目之一，目的是为了扩展数据库和Cypher，以便在程序中使用查询、加载、以及导入导出等你能想象到的所有功能。
+          APOC 到底是什么APOC作为Neo4j实验室的项目之一，目的是为了扩展数据库和Cypher，以便在程序中使用查询、加载、以及导入导出等你能想象到的所有功能。
 目前已经有超过450个标准的procedures。
 官方文档入口 官方文档入口。
 如何使用Procedure
-CALL &lt;package&gt;.&lt;subpackage&gt;.&lt;procedure&gt;(&lt;argument1&gt;,&lt
+CALL &lt;package&gt;.&lt;subpackage&gt;.&lt;procedure&gt;(&lt;argument1&gt;,&lt;argument2&gt;,...);
+
+CALL apoc.help(&#39;keyword&#39;)
+
+
+如果我们想查看所有用来修改，转换，或者处理数据的关于t
           ...
           <!--noindex-->
           <div class="post-button text-center">

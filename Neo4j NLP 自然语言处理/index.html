@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next muse" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="baidu-site-verification" content="code-OAt1TnoeHW" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+  
+  
+  <link rel="stylesheet" media="all" href="/lib/Han/dist/han.min.css?v=3.3">
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Neo4j, NLP," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Natural Language Processing (自然语言处理)Neo4j提供了对结构化的数据强有力的查询能力，但是真实世界中存在大量的文本数据，NLP技术可以从这些文本中提取出潜在的结构化数据，该结构可能与表示句子中标记的节点一样简单，也可能与表示使用命名实体识别算法提取的实体的节点一样复杂。 为什么用NLP从文本文件中提取出结构化的数据，然后存储到图数据库中后在多个场景中使用，包括：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Neo4j NLP 自然语言处理">
+<meta property="og:url" content="https://xcfans.top/Neo4j%20NLP%20%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="香菜粉丝">
+<meta property="og:description" content="Natural Language Processing (自然语言处理)Neo4j提供了对结构化的数据强有力的查询能力，但是真实世界中存在大量的文本数据，NLP技术可以从这些文本中提取出潜在的结构化数据，该结构可能与表示句子中标记的节点一样简单，也可能与表示使用命名实体识别算法提取的实体的节点一样复杂。 为什么用NLP从文本文件中提取出结构化的数据，然后存储到图数据库中后在多个场景中使用，包括：">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/03/a2860430d5d5486a.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/03/0c331fc49efe42eb.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/03/a34737e8e2bb89f8.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/03/d8fb03e76e94cd82.jpg">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/03/63ac1267c39b5d35.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/03/605088a28b60ca60.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/03/88a1e64c2d626624.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/03/af7a3456da7a7936.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/03/df5ddddaff1bc89e.png">
+<meta property="article:published_time" content="2021-03-03T07:32:14.000Z">
+<meta property="article:modified_time" content="2021-03-09T06:23:38.524Z">
+<meta property="article:author" content="Shangjin">
+<meta property="article:tag" content="Neo4j, NLP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ftp.bmp.ovh/imgs/2021/03/a2860430d5d5486a.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://xcfans.top/Neo4j NLP 自然语言处理/"/>
+
+
+
+
+
+  <title>Neo4j NLP 自然语言处理 | 香菜粉丝</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">香菜粉丝</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Pespi</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/%20" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://xcfans.top/Neo4j%20NLP%20%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Shangjin">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/logo.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="香菜粉丝">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Neo4j NLP 自然语言处理</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-03-03T15:32:14+08:00">
+                2021-03-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tech/" itemprop="url" rel="index">
+                    <span itemprop="name">Tech</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.7k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  8
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body han-init-context" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Natural-Language-Processing-自然语言处理"><a href="#Natural-Language-Processing-自然语言处理" class="headerlink" title="Natural Language Processing (自然语言处理)"></a>Natural Language Processing (自然语言处理)</h2><p>Neo4j提供了对结构化的数据强有力的查询能力，但是真实世界中存在大量的文本数据，NLP技术可以从这些文本中<br>提取出潜在的结构化数据，该结构可能与表示句子中标记的节点一样简单，也可能与表示使用命名实体识别算法提取的实体的节点一样复杂。</p>
+<h2 id="为什么用NLP"><a href="#为什么用NLP" class="headerlink" title="为什么用NLP"></a>为什么用NLP</h2><p>从文本文件中提取出结构化的数据，然后存储到图数据库中后在多个场景中使用，包括：</p>
+<ul>
+<li>基于内容的推荐系统</li>
+<li>自然语言搜索</li>
+<li>文档相似性</li>
+</ul>
+<h2 id="构建一个迷你内容推荐系统"><a href="#构建一个迷你内容推荐系统" class="headerlink" title="构建一个迷你内容推荐系统"></a>构建一个迷你内容推荐系统</h2><p>接下来，我们使用Procedure为This Week in Neo4j (TWIN4j)构建一个推荐系统，内容是每周Neo4j的实时资讯，咨询包含了很多主题，意味着如果你喜欢其中的一个咨询主题，并不意味着你会喜欢它后面的一个资讯。</p>
+<p>NLP Procedures 提供了对每一个资讯建立实体图的能力，这让我们可以推荐可能会喜欢阅读的资讯。</p>
+<h2 id="导入TWiIN4j-blog-posts"><a href="#导入TWiIN4j-blog-posts" class="headerlink" title="导入TWiIN4j blog posts"></a>导入TWiIN4j blog posts</h2><p>在我们做NLP的工作之前，先把TWIN4j 的blog导入进来，我们使用APOC的Load Json procedure 将这些资讯内容通过API导入进来。</p>
+<ol>
+<li><p>Neo4j的交互命令中输入如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CALL apoc.load.json(&quot;https:&#x2F;&#x2F;neo4j.com&#x2F;wp-json&#x2F;wp&#x2F;v2&#x2F;posts?tags&#x3D;3201&quot;)</span><br><span class="line">YIELD value</span><br><span class="line">RETURN keys(value)</span><br><span class="line">LIMIT 1</span><br></pre></td></tr></table></figure>
+<p>Result:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&quot;date&quot;, &quot;template&quot;, &quot;_links&quot;, &quot;link&quot;, &quot;type&quot;, &quot;title&quot;, &quot;content&quot;, &quot;featured_media&quot;, &quot;modified&quot;, &quot;id&quot;, &quot;categories&quot;, &quot;date_gmt&quot;, &quot;slug&quot;, &quot;modified_gmt&quot;, &quot;author&quot;, &quot;yst_prominent_words&quot;, &quot;format&quot;, &quot;comment_status&quot;, &quot;yoast_head&quot;, &quot;tags&quot;, &quot;ping_status&quot;, &quot;meta&quot;, &quot;sticky&quot;, &quot;guid&quot;, &quot;excerpt&quot;, &quot;status&quot;]</span><br></pre></td></tr></table></figure>
+<p>以上结果是每一条资讯所包含的字段</p>
+</li>
+<li><p>以上得到的结果中<code>title</code>,<code>date</code>和<code>link</code>是我们重点关注的字段，创建一个Article标签的节点。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CALL apoc.load.json(&quot;https:&#x2F;&#x2F;neo4j.com&#x2F;wp-json&#x2F;wp&#x2F;v2&#x2F;posts?tags&#x3D;3201&quot;)</span><br><span class="line">YIELD value</span><br><span class="line">MERGE (a:Article &#123;id: value.id&#125;)</span><br><span class="line">SET a.title &#x3D; value.title.rendered,</span><br><span class="line">a.date &#x3D; datetime(value.date),</span><br><span class="line">a.link &#x3D; value.link;</span><br></pre></td></tr></table></figure></li>
+<li><p>默认的API每页会返回10条内容，接下来用query为TWINN4J的实体创建节点，<br>我们使用APOC’s Priodic Iterate procedure循环API的内容。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CALL apoc.periodic.iterate(</span><br><span class="line">&quot;UNWIND range(1,16) AS page RETURN page&quot;,</span><br><span class="line">&quot;CALL apoc.load.json(&#39;https:&#x2F;&#x2F;neo4j.com&#x2F;wp-json&#x2F;wp&#x2F;v2&#x2F;posts?tags&#x3D;3201&amp;page&#x3D;&#39; + page)</span><br><span class="line">YIELD value</span><br><span class="line">MERGE (a:Article &#123;id: value.id&#125;)</span><br><span class="line">SET a.title &#x3D; value.title.rendered,</span><br><span class="line">    a.date &#x3D; datetime(value.date),</span><br><span class="line">    a.link &#x3D; value.link;</span><br><span class="line">&quot;,</span><br><span class="line">&#123;&#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p> 循环取出16页的数据，注意，官网给的代码<code>a.date = datetime(value.date)</code>后面少一个逗号，会报错，一定要在句尾加上句号。</p>
+</li>
+<li><p>接下来验证一下数据是否导入成功。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH (:Article)</span><br><span class="line">RETURN count(*);</span><br></pre></td></tr></table></figure>
+<p> Result:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">count(*)</span><br><span class="line">159</span><br></pre></td></tr></table></figure></li>
+<li><p>接下来，我们用APOC 将HTML中的content内容提取出来存储在节点上。</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CALL apoc.periodic.iterate(</span><br><span class="line">&quot;MATCH (a:Article) WHERE not(exists(a.body)) RETURN a&quot;,</span><br><span class="line">&quot;CALL apoc.load.html(a.link, &#123;body: &#39;div.entry-content&#39;&#125;)</span><br><span class="line">YIELD value</span><br><span class="line">SET a.body &#x3D; value.body[0].text&quot;,</span><br><span class="line">&#123;batchSize: 10 &#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用APOC-NLP-procedures"><a href="#使用APOC-NLP-procedures" class="headerlink" title="使用APOC NLP procedures"></a>使用APOC NLP procedures</h2><p>NLP procedures 在我们安装APOC后不会被默认激活，我们需要将NLP dependencies的jar包放在plugin文件夹下面,切记下载与你neo4j数据库版本对应的NLP denpendencies</p>
+</li>
+</ol>
+<p>验证是否安装成功</p>
+<p><code>CALL apoc.help(&quot;nlp.aws&quot;);</code></p>
+<p><img src="https://ftp.bmp.ovh/imgs/2021/03/a2860430d5d5486a.png" alt=""></p>
+<h2 id="用NLP-procedures-取出数据实体"><a href="#用NLP-procedures-取出数据实体" class="headerlink" title="用NLP procedures 取出数据实体"></a>用NLP procedures 取出数据实体</h2><ol>
+<li>先从AWS中拿到AWS access key ID 和 secrect access key,然后在neo4j的browser中定义好apiKey和apiSecret。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:parma apiKey &#x3D;&gt; (&#39;apiKey&#39;)</span><br><span class="line">:parma apiSecret &#x3D;&gt;(&#39;apiSecret&#39;)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>接下来，我们将每一篇资讯中的实体提取出来<br>AWS’NLP API 限制每个文档的最大size为5000bytes，因此我们首先要将小于这个限制的文档筛选出来。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:Article)</span><br><span class="line">WHERE size(n.body) &lt;&#x3D; 5000</span><br><span class="line">RETURN n.link, size(n.body) AS sizeInBytes, n.date</span><br><span class="line">ORDER BY n.date DESC</span><br><span class="line">LIMIT 5;</span><br></pre></td></tr></table></figure>
+<p><img src="https://ftp.bmp.ovh/imgs/2021/03/0c331fc49efe42eb.png" alt=""></p>
+<ol start="2">
+<li><p>返回文章的实体</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:Article)</span><br><span class="line">WHERE size(n.body) &lt;&#x3D; 5000</span><br><span class="line">WITH n</span><br><span class="line">ORDER BY n.date DESC</span><br><span class="line">LIMIT 1</span><br><span class="line">CALL apoc.nlp.aws.entities.stream(n, &#123;</span><br><span class="line">  key: &quot;&quot;,</span><br><span class="line">  secret: &quot;&quot;,</span><br><span class="line">  nodeProperty: &quot;body&quot;</span><br><span class="line">&#125;)</span><br><span class="line">YIELD value</span><br><span class="line">UNWIND value.entities AS entity</span><br><span class="line">RETURN DISTINCT entity.text, entity.type</span><br><span class="line">LIMIT 10;</span><br></pre></td></tr></table></figure>
+<p><img src="https://ftp.bmp.ovh/imgs/2021/03/a34737e8e2bb89f8.png" alt=""></p>
+</li>
+<li><p>上面的结果返回了十个结果，下面的query使用procedure可视化这些实体。</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:Article)</span><br><span class="line">WHERE size(n.body) &lt;&#x3D; 5000</span><br><span class="line">WITH n</span><br><span class="line">ORDER BY n.date DESC</span><br><span class="line">LIMIT 1</span><br><span class="line">CALL apoc.nlp.aws.entities.graph(n, &#123;</span><br><span class="line">  key: &quot;&quot;,</span><br><span class="line">  secret: &quot;&quot;,</span><br><span class="line">  nodeProperty: &quot;body&quot;,</span><br><span class="line">  write: false</span><br><span class="line">&#125;)</span><br><span class="line">YIELD graph AS g</span><br><span class="line">RETURN g;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://ftp.bmp.ovh/imgs/2021/03/d8fb03e76e94cd82.jpg" alt=""></p>
+<h2 id="构建整个TWIN4J的实体图谱"><a href="#构建整个TWIN4J的实体图谱" class="headerlink" title="构建整个TWIN4J的实体图谱"></a>构建整个TWIN4J的实体图谱</h2><p>有必要先解释一下TWIN4J不是语言也不是新的数据库，是This Week in Neo4J,neo4j的新闻资讯博客</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">MATCH (n:Article)</span><br><span class="line">WHERE size(n.body) &lt;&#x3D; 4500</span><br><span class="line">WITH collect(n) AS articles</span><br><span class="line">CALL apoc.nlp.aws.entities.graph(articles, &#123;</span><br><span class="line">  key: &quot;&quot;,</span><br><span class="line">  secret: &quot;&quot;,</span><br><span class="line">  nodeProperty: &quot;body&quot;,</span><br><span class="line">  writeRelationshipType: &quot;ENTITY&quot;,</span><br><span class="line">  write: true</span><br><span class="line">&#125;)</span><br><span class="line">YIELD graph AS g</span><br><span class="line">RETURN g;</span><br></pre></td></tr></table></figure>
+<p>Result:<br><img src="https://ftp.bmp.ovh/imgs/2021/03/63ac1267c39b5d35.png" alt=""></p>
+<h2 id="哪些是最常见的实体？"><a href="#哪些是最常见的实体？" class="headerlink" title="哪些是最常见的实体？"></a>哪些是最常见的实体？</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MATCH (e:Entity)&lt;-[:ENTITY]-()</span><br><span class="line">RETURN e.text, labels(e) AS labels, count(*) AS occurrences</span><br><span class="line">ORDER BY occurrences DESC</span><br><span class="line">LIMIT 10;</span><br></pre></td></tr></table></figure>
+<p>Result:<br><img src="https://ftp.bmp.ovh/imgs/2021/03/605088a28b60ca60.png" alt=""></p>
+<h2 id="为什么人名被频繁的提起"><a href="#为什么人名被频繁的提起" class="headerlink" title="为什么人名被频繁的提起"></a>为什么人名被频繁的提起</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MATCH (e:Entity:Person)&lt;-[:ENTITY]-(article)</span><br><span class="line">RETURN e.text, count(*) AS occurrences, date(max(article.date)) AS lastMention</span><br><span class="line">ORDER BY occurrences DESC</span><br><span class="line">LIMIT 10;</span><br></pre></td></tr></table></figure>
+<p>Result:<br><img src="https://ftp.bmp.ovh/imgs/2021/03/88a1e64c2d626624.png" alt=""></p>
+<h2 id="寻找每篇文章里最有关联的词"><a href="#寻找每篇文章里最有关联的词" class="headerlink" title="寻找每篇文章里最有关联的词"></a>寻找每篇文章里最有关联的词</h2><blockquote>
+<p>TF-IDF(Term frequency - inverse document frequency), 是一种反映单个词在整个文档中的重要性的统计方法，通常被用作信息检索和文本挖掘中的权重因子。TF-IDF的值随着单词在文档中的出现频率升高而升高。但存在于语料库中的词的频率会被抵消。</p>
+</blockquote>
+<p>Adam Cowley 最近写了一片文章 <a href="https://adamcowley.co.uk/neo4j/calculating-tf-idf-score-cypher/" target="_blank" rel="noopener"> explaining how to calculate tf-idf scores using Cypher</a>，因此我们可以借用他写的query来计算图中实体的权重。</p>
+<p>先用id为119258的文章来测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 所有文章的数量</span><br><span class="line">MATCH (:Article) WITH count(*) AS totalArticles</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 找到文章对应的所有关联实体</span><br><span class="line">MATCH (a:Article &#123;id: 119258&#125;)-[entityRel:ENTITY]-(e:Entity)</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 统计文章和实体</span><br><span class="line">WITH a, e,</span><br><span class="line">    totalArticles,</span><br><span class="line">    size((a)-[:ENTITY]-&gt;(e)) AS occurrencesInArticle,</span><br><span class="line">    size((a)-[:ENTITY]-&gt;()) AS entitiesInArticle,</span><br><span class="line">    size(()-[:ENTITY]-&gt;(e)) AS articlesWithEntity</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Calculate TF and IDF</span><br><span class="line">WITH a, e,</span><br><span class="line">    totalArticles,</span><br><span class="line">    1.0 * occurrencesInArticle &#x2F; entitiesInArticle AS tf,</span><br><span class="line">    log10( totalArticles &#x2F; articlesWithEntity ) AS idf,</span><br><span class="line">    occurrencesInArticle,</span><br><span class="line">    entitiesInArticle,</span><br><span class="line">    articlesWithEntity</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Combine together to return a result</span><br><span class="line">RETURN a.id, e.text, tf * idf as tfIdf</span><br><span class="line">ORDER BY tfIdf DESC</span><br><span class="line">LIMIT 10;</span><br></pre></td></tr></table></figure>
+<p>Result:<br><img src="https://ftp.bmp.ovh/imgs/2021/03/af7a3456da7a7936.png" alt=""></p>
+<p>接下来，将计算TF-IDF所得到的Entity在文章中的权重保存为ENTITYREL的score属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">CALL apoc.periodic.iterate(</span><br><span class="line">  &quot;MATCH (:Article)</span><br><span class="line">   WITH count(*) AS totalArticles</span><br><span class="line">   MATCH (a:Article)</span><br><span class="line">   RETURN a, totalArticles&quot;,</span><br><span class="line">  &quot;MATCH (a)-[entityRel:ENTITY]-(e:Entity)</span><br><span class="line">   WITH a, e, entityRel,</span><br><span class="line">        totalArticles,</span><br><span class="line">        size((a)-[:ENTITY]-&gt;(e)) AS occurrencesInArticle,</span><br><span class="line">        size((a)-[:ENTITY]-&gt;()) AS entitiesInArticle,</span><br><span class="line">        size(()-[:ENTITY]-&gt;(e)) AS articlesWithEntity</span><br><span class="line"></span><br><span class="line">   WITH a, e, entityRel,</span><br><span class="line">        totalArticles,</span><br><span class="line">        1.0 * occurrencesInArticle &#x2F; entitiesInArticle AS tf,</span><br><span class="line">        log10( totalArticles &#x2F; articlesWithEntity ) AS idf,</span><br><span class="line">        occurrencesInArticle,</span><br><span class="line">        entitiesInArticle,</span><br><span class="line">        articlesWithEntity</span><br><span class="line"></span><br><span class="line">   SET entityRel.score &#x3D; tf * idf&quot;,</span><br><span class="line">  &#123;&#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>计算完成后，我们可以找到每一篇文章权重最高的实体。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:Article)-[rel:ENTITY]-&gt;(e)</span><br><span class="line">WITH a, e, rel</span><br><span class="line">ORDER BY a.date DESC, rel.score DESC</span><br><span class="line">RETURN date(a.date),  collect(e.text)[..10] AS entities</span><br><span class="line">ORDER BY date(a.date) DESC</span><br><span class="line">LIMIT 10;</span><br></pre></td></tr></table></figure>
+<p>Result:<br><img src="https://ftp.bmp.ovh/imgs/2021/03/df5ddddaff1bc89e.png" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/wechat-qrcode.jpg" alt="Shangjin wechat" style="width: 200px; max-width: 100%;"/>
+    <div>关注公众号了解更多信息</div>
+</div>
+
+      </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Neo4j-NLP/" rel="tag"># Neo4j, NLP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Neo4j%20APOC%20%E2%80%94%20%E5%88%9D%E4%BD%93%E9%AA%8C/" rel="next" title="Neo4j APOC — 初体验">
+                <i class="fa fa-chevron-left"></i> Neo4j APOC — 初体验
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/%E5%9F%BA%E4%BA%8EKnowlege-Graph%20%E7%9A%84%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" rel="prev" title="基于Knowlege-Graph的内容推荐系统">
+                基于Knowlege-Graph的内容推荐系统 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/logo.jpg"
+                alt="Shangjin" />
+            
+              <p class="site-author-name" itemprop="name">Shangjin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                Links
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://macshuo.com/" title="MacTalk" target="_blank">MacTalk</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Natural-Language-Processing-自然语言处理"><span class="nav-number">1.</span> <span class="nav-text">Natural Language Processing (自然语言处理)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么用NLP"><span class="nav-number">2.</span> <span class="nav-text">为什么用NLP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构建一个迷你内容推荐系统"><span class="nav-number">3.</span> <span class="nav-text">构建一个迷你内容推荐系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#导入TWiIN4j-blog-posts"><span class="nav-number">4.</span> <span class="nav-text">导入TWiIN4j blog posts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用APOC-NLP-procedures"><span class="nav-number">5.</span> <span class="nav-text">使用APOC NLP procedures</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用NLP-procedures-取出数据实体"><span class="nav-number">6.</span> <span class="nav-text">用NLP procedures 取出数据实体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构建整个TWIN4J的实体图谱"><span class="nav-number">7.</span> <span class="nav-text">构建整个TWIN4J的实体图谱</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#哪些是最常见的实体？"><span class="nav-number">8.</span> <span class="nav-text">哪些是最常见的实体？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么人名被频繁的提起"><span class="nav-number">9.</span> <span class="nav-text">为什么人名被频繁的提起</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#寻找每篇文章里最有关联的词"><span class="nav-number">10.</span> <span class="nav-text">寻找每篇文章里最有关联的词</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2020 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Shangjin</span>
+
+  
+</div>
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+-->
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
